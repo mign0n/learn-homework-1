@@ -15,19 +15,15 @@
 import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from datetime import date
+import ephem
+import settings
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
                     filename='bot.log')
 
-
-PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
-    'urllib3_proxy_kwargs': {
-        'username': 'learn',
-        'password': 'python'
-    }
-}
+DATE_TODAY = date.today().strftime('%Y/%m/%d')
 
 
 def greet_user(update, context):
@@ -39,16 +35,48 @@ def greet_user(update, context):
 def talk_to_me(update, context):
     user_text = update.message.text
     print(user_text)
-    update.message.reply_text(text)
+    update.message.reply_text(user_text)
+
+
+def get_constelation(update, context):
+    user_text = update.message.text
+    user_request = user_text.split()
+    print(user_request)
+    planet = user_request[-1].lower()
+    print(planet)
+    if planet == 'mercury':
+        p = ephem.Mercury(DATE_TODAY)
+    elif planet == 'venus':
+        p = ephem.Venus(DATE_TODAY)
+    elif planet == 'mars':
+        p = ephem.Mars(DATE_TODAY)
+    elif planet == 'jupiter':
+        p = ephem.Jupiter(DATE_TODAY)
+    elif planet == 'saturn':
+        p = ephem.Saturn(DATE_TODAY)
+    elif planet == 'uranus':
+        p = ephem.Uranus(DATE_TODAY)
+    elif planet == 'neptune':
+        p = ephem.Neptune(DATE_TODAY)
+    elif planet == 'pluto':
+        p = ephem.Pluto(DATE_TODAY)
+    else:
+        update.message.reply_text('I don\'t know this planet. Maybe you meant the Moon?')
+        planet = 'moon'
+        p = ephem.Moon(DATE_TODAY)
+
+    constellation = ephem.constellation(p)
+    print(constellation)
+    update.message.reply_text(f'Today {planet.capitalize()} is in the constellation of {constellation[-1]}.')
 
 
 def main():
-    mybot = Updater("КЛЮЧ, КОТОРЫЙ НАМ ВЫДАЛ BotFather", request_kwargs=PROXY, use_context=True)
+    mybot = Updater(settings.API_KEY)
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
+    dp.add_handler(CommandHandler("planet", get_constelation))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
-
     mybot.start_polling()
     mybot.idle()
 
