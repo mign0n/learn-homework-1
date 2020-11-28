@@ -17,8 +17,8 @@
 
 
 def spec_compare_strings(string1, string2):
-    result = 'Unknown'
-    if not (type(string1) is str and type(string2) is str):
+    result = None
+    if not (isinstance(string1, str) and isinstance(string2, str)):
         result = 0
     elif string1 == string2:
         result = 1
