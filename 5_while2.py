@@ -15,13 +15,25 @@
     
 """
 
-questions_and_answers = {}
+questions_and_answers = {"How are you?": "Fine, thanks!",
+                         "What are you doing now?": "I am writing a code.",
+                         "What programming language do you use?": "Python, of course.",
+                         "Do you know other programming languages?": "Don't bother me. I'm busy."
+                         }
+
 
 def ask_user(answers_dict):
     """
     Замените pass на ваш код
     """
-    pass
-    
+    while True:
+        question = input("Enter question: ")
+        answer = answers_dict.get(question)
+        if answer is None:
+            break
+        else:
+            print(answer)
+
+
 if __name__ == "__main__":
     ask_user(questions_and_answers)
